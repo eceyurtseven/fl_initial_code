@@ -7,7 +7,9 @@ pip install -r requirements.txt
 ```
 
 # Usage
+```bash
 python fl.py
+```
 
 # Customization
 
