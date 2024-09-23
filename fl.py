@@ -33,7 +33,7 @@ num_clients = len(datasets)
 
 # loading datasets, split into training, testing, and validation
 for i in range(num_clients):
-    dataset = np.loadtxt('datasets/pima_indians.csv', delimiter=',', skiprows=1)
+    dataset = np.loadtxt(datasets[i], delimiter=',', skiprows=1)
     X = dataset[:,0:4]
     y = dataset[:,4]
     stratified_split = StratifiedShuffleSplit(n_splits=n_splits, test_size=test_size, random_state=530)
