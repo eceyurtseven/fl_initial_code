@@ -1,0 +1,8 @@
+numpy
+tensorflow
+flwr
+scikit-learn
+flwr
+flwr[simulation]
+ray
+matplotlib
