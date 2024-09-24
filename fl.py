@@ -11,6 +11,10 @@ from utils import get_client_fn, get_evaluate_fn, weighted_average
 # put here datasets paths
 datasets = [
     'datasets/pima_indians.csv',
+    'datasets/pakistan.csv',
+    'datasets/iraq.csv',
+    'datasets/germany.csv',
+    'datasets/china.csv',
 ]
 
 n_splits = 1
@@ -30,6 +34,34 @@ y_trains = []
 y_tests = []
 i = 0
 num_clients = len(datasets)
+
+def check_datasets_for_floats(datasets):
+    for i, dataset_path in enumerate(datasets):
+        try:
+            # Load the dataset, skipping the first row
+            data = np.genfromtxt(dataset_path, delimiter=',', skip_header=1, dtype=str)
+            
+            # Check if all values can be converted to float
+            all_floats = True
+            for row in data:
+                for value in row:
+                    try:
+                        float(value)
+                    except ValueError:
+                        all_floats = False
+                        break
+                if not all_floats:
+                    break
+            
+            if all_floats:
+                print(f"Dataset {i} ({dataset_path}): All values are floats.")
+            else:
+                print(f"Dataset {i} ({dataset_path}): Contains non-float values.")
+        
+        except Exception as e:
+            print(f"Error processing dataset {i} ({dataset_path}): {e}")
+
+check_datasets_for_floats(datasets)
 
 # loading datasets, split into training, testing, and validation
 for i in range(num_clients):
