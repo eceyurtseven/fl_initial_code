@@ -1,9 +1,10 @@
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 import flwr as fl
 from typing import Dict, List, Tuple
 from flwr.common import Metrics
 import numpy as np
+from sklearn.metrics import f1_score
 
 
 def get_model():
@@ -36,8 +37,10 @@ class FlowerClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         self.model.set_weights(parameters)
         loss, acc = self.model.evaluate(self.X_test, np.array(self.y_test), verbose=1)
-        print(f"Evaluation loss: {loss}, accuracy: {acc}")
-        return loss, len(self.X_test), {"accuracy": acc}
+        y_pred = (self.model.predict(self.X_test) > 0.5).astype("int32")
+        f1 = f1_score(self.y_test, y_pred)
+        print(f"Evaluation loss: {loss}, accuracy: {acc}, F1 score: {f1}")
+        return loss, len(self.X_test), {"accuracy": acc, "f1_score": f1}
 
 def get_client_fn(X_trains, X_tests, y_trains, y_tests):
     """Return a function to construct a client.
@@ -61,10 +64,12 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     the client's evaluate() method."""
     # Multiply accuracy of each client by number of examples used
     accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+    f1_scores = [num_examples * m["f1_score"] for num_examples, m in metrics]
     examples = [num_examples for num_examples, _ in metrics]
 
     # Aggregate and return custom metric (weighted average)
-    return {"accuracy": sum(accuracies) / sum(examples)}
+    return {"accuracy": sum(accuracies) / sum(examples), "f1_score": sum(f1_scores) / sum(examples)}
+
 
 
 def get_evaluate_fn(X_test, y_test):
@@ -79,6 +84,8 @@ def get_evaluate_fn(X_test, y_test):
         model = get_model()
         model.set_weights(parameters)
         loss, acc = model.evaluate(X_test, y_test, verbose=1)
-        return loss, {"accuracy": acc}
+        y_pred = (model.predict(X_test) > 0.5).astype("int32")
+        f1 = f1_score(y_test, y_pred)
+        return loss, {"accuracy": acc, "f1_score": f1}
 
     return evaluate

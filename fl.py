@@ -68,14 +68,14 @@ for i in range(num_clients):
     dataset = np.loadtxt(datasets[i], delimiter=',', skiprows=1)
     X = dataset[:,0:4]
     y = dataset[:,4]
-    stratified_split = StratifiedShuffleSplit(n_splits=n_splits, test_size=test_size, random_state=530)
+    stratified_split = StratifiedShuffleSplit(n_splits=n_splits, test_size=test_size)
     for train_index, test_index in stratified_split.split(X, y):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
         X_trains.append(X_train)
         y_trains.append(y_train)
 
-        stratified_split_validation = StratifiedShuffleSplit(n_splits=n_splits, test_size=0.33, random_state=530)
+        stratified_split_validation = StratifiedShuffleSplit(n_splits=n_splits, test_size=0.33)
         for t_index,  v_index in stratified_split_validation.split( X[test_index], y[test_index]):
             X_test, X_validation = X_test[t_index], X_test[v_index]
             y_test, y_validation = y_test[t_index], y_test[v_index]
@@ -122,10 +122,27 @@ global_accuracy_distributed = history.metrics_distributed["accuracy"]
 acc_distributed = [100.0 * data[1] for data in global_accuracy_distributed]
 acc_distributed.insert(0, 0)  # Adds 1 at index 0
 
+global_f1_centralized = history.metrics_centralized["f1_score"]
+rounds = [data[0] for data in global_f1_centralized]
+f1_centralized = [data[1] for data in global_f1_centralized]
+
+global_f1_distributed = history.metrics_distributed["f1_score"]
+f1_distributed = [data[1] for data in global_f1_distributed]
+f1_distributed.insert(0, 0)  # Adds 1 at index 0
+
 plt.plot(round, acc, label = 'Centralized')
 plt.plot(round, acc_distributed, label='Distributed')
 plt.grid()
 plt.ylabel("Accuracy (%)")
+plt.xlabel("Round")
+plt.legend()
+plt.yscale("log")
+plt.show()
+
+plt.plot(rounds, f1_centralized, label='Centralized')
+plt.plot(rounds, f1_distributed, label='Distributed')
+plt.grid()
+plt.ylabel("F1 Score")
 plt.xlabel("Round")
 plt.legend()
 plt.yscale("log")
