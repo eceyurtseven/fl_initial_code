@@ -14,7 +14,6 @@ datasets = [
     'datasets/pakistan.csv',
     'datasets/iraq.csv',
     'datasets/germany.csv',
-    'datasets/china.csv',
 ]
 
 n_splits = 1
@@ -66,8 +65,8 @@ check_datasets_for_floats(datasets)
 # loading datasets, split into training, testing, and validation
 for i in range(num_clients):
     dataset = np.loadtxt(datasets[i], delimiter=',', skiprows=1)
-    X = dataset[:,0:4]
-    y = dataset[:,4]
+    X = dataset[:,0:3]
+    y = dataset[:,3]
     stratified_split = StratifiedShuffleSplit(n_splits=n_splits, test_size=test_size)
     for train_index, test_index in stratified_split.split(X, y):
         X_train, X_test = X[train_index], X[test_index]

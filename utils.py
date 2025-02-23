@@ -10,7 +10,7 @@ from sklearn.metrics import f1_score
 def get_model():
     """Constructs a simple model architecture suitable for MNIST."""
     model = Sequential()
-    model.add(Dense(12, input_shape=(4,), activation='relu'))
+    model.add(Dense(12, input_shape=(3,), activation='relu'))
     model.add(Dense(8, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])

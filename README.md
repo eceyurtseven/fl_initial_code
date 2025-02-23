@@ -1,12 +1,17 @@
-# fl-muliple-datasets
-This repository contains code to run a Federated Learning (FL) experiment with the Flower library. The code is structured to easily support multiple datasets, and can be adapted to work with any machine learning model. Each client in the FL setup corresponds to a dataset. Each dataset is splitt into 70% for training, 20% for testing, and 10% for validation. Validation datasets are combined together, in order to be used in validating the aggregated model.
+# Federated Learning with Multiple Datasets
 
-# Installation
-```bash
-pip install -r requirements.txt
-```
+This project implements federated learning using Flower framework with multiple datasets.
 
-# Usage
+## Structure
+- `utils.py`: Contains utility functions and FlowerClient implementation
+
+## Requirements
+- TensorFlow
+- Flower (flwr)
+- NumPy
+- scikit-learn
+
+## Usage
 ```bash
 python fl.py
 ```
